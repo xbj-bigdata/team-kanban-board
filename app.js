@@ -74,8 +74,55 @@ function createId() {
  * ---------------------------------------------------------- */
 
 function renderBoard() {
-  // TODO: 由前端开发者 A 实现
-  console.warn('[kanban] renderBoard() 尚未实现（前端开发者 A 负责）');
+  STATUSES.forEach(function (status) {
+    const list = document.getElementById('list-' + status);
+    if (!list) return;
+
+    // 1. 清空该列
+    list.innerHTML = '';
+
+    // 2. 取出属于该列的任务
+    const items = tasks.filter(function (task) {
+      return task.status === status;
+    });
+
+    // 3. 空列显示提示
+    if (items.length === 0) {
+      const hint = document.createElement('li');
+      hint.className = 'empty-hint';
+      hint.textContent = '暂无任务';
+      list.appendChild(hint);
+    } else {
+      // 4. 渲染任务卡片
+      items.forEach(function (task) {
+        const card = document.createElement('li');
+        card.className = 'task-card';
+        card.draggable = true;                 // 供开发者 C 的拖拽功能使用
+        card.dataset.id = task.id;             // 供开发者 C 识别具体任务
+
+        const text = document.createElement('span');
+        text.className = 'task-text';
+        text.textContent = task.title;
+
+        const delBtn = document.createElement('button');
+        delBtn.className = 'task-delete';
+        delBtn.type = 'button';
+        delBtn.title = '删除任务';
+        delBtn.textContent = '\u00D7';         // ×
+        delBtn.dataset.action = 'delete';      // 供开发者 B 的事件委托识别
+
+        card.appendChild(text);
+        card.appendChild(delBtn);
+        list.appendChild(card);
+      });
+    }
+
+    // 5. 更新该列右上角的任务计数
+    const counter = document.querySelector('[data-count-for="' + status + '"]');
+    if (counter) {
+      counter.textContent = String(items.length);
+    }
+  });
 }
 
 /* ------------------------------------------------------------
