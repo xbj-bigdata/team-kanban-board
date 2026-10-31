@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>团队任务看板 · Team Kanban Board</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header class="app-header">
+    <h1 class="app-title">团队任务看板</h1>
+    <p class="app-subtitle">Team Kanban Board · 拖拽卡片以更新任务状态</p>
+  </header>
+
+  <!-- 新建任务表单（前端开发者 B 负责接入逻辑） -->
+  <section class="task-form">
+    <form id="new-task-form" autocomplete="off">
+      <input
+        type="text"
+        id="new-task-input"
+        class="task-input"
+        placeholder="输入新任务后回车，或点击「添加任务」"
+        maxlength="100"
+        required
+      />
+      <button type="submit" class="btn btn-primary">添加任务</button>
+    </form>
+  </section>
+
+  <!-- 看板主体：三列 -->
+  <main class="board" id="board">
+
+    <section class="column" data-status="todo">
+      <header class="column-header">
+        <h2 class="column-title">待办</h2>
+        <span class="column-count" data-count-for="todo">0</span>
+      </header>
+      <ul class="task-list" id="list-todo" data-status="todo"></ul>
+    </section>
+
+    <section class="column" data-status="doing">
+      <header class="column-header">
+        <h2 class="column-title">进行中</h2>
+        <span class="column-count" data-count-for="doing">0</span>
+      </header>
+      <ul class="task-list" id="list-doing" data-status="doing"></ul>
+    </section>
+
+    <section class="column" data-status="done">
+      <header class="column-header">
+        <h2 class="column-title">已完成</h2>
+        <span class="column-count" data-count-for="done">0</span>
+      </header>
+      <ul class="task-list" id="list-done" data-status="done"></ul>
+    </section>
+
+  </main>
+
+  <footer class="app-footer">
+    <span>数据存储于浏览器 localStorage · HTML5 + CSS3 + Vanilla JavaScript</span>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
