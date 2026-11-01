@@ -148,9 +148,22 @@ function renderBoard() {
  * 新增任务
  * @param {string} title 任务标题
  */
+/**
+ * 新增任务
+ * @param {string} title 任务标题
+ */
 function addTask(title) {
-  // TODO: 由前端开发者 B 实现
-  console.warn('[kanban] addTask() 尚未实现（前端开发者 B 负责）', title);
+  const text = (title || '').trim();
+  if (!text) return;
+
+  tasks.push({
+    id: createId(),
+    title: text,
+    status: 'todo'
+  });
+
+  saveTasks();
+  renderBoard();
 }
 
 /**
@@ -158,17 +171,42 @@ function addTask(title) {
  * @param {string} id 任务 ID
  */
 function deleteTask(id) {
-  // TODO: 由前端开发者 B 实现
-  console.warn('[kanban] deleteTask() 尚未实现（前端开发者 B 负责）', id);
+  tasks = tasks.filter(function (task) {
+    return task.id !== id;
+  });
+
+  saveTasks();
+  renderBoard();
 }
 
 /**
- * 初始化「新建任务」表单
+ * 初始化「新建任务」表单 + 删除按钮事件委托
  */
 function initNewTaskForm() {
-  // TODO: 由前端开发者 B 实现
-  console.warn('[kanban] initNewTaskForm() 尚未实现（前端开发者 B 负责）');
+  const form = document.getElementById('new-task-form');
+  const input = document.getElementById('new-task-input');
+  const board = document.querySelector('.board');
+
+  if (!form || !input || !board) return;
+
+  // 提交新任务
+  form.addEventListener('submit', function (event) {
+    event.preventDefault();
+    addTask(input.value);
+    input.value = '';
+  });
+
+  // 删除任务：事件委托（卡片是动态生成的）
+  board.addEventListener('click', function (event) {
+    if (event.target.dataset.action === 'delete') {
+      const card = event.target.closest('.task-card');
+      if (card) {
+        deleteTask(card.dataset.id);
+      }
+    });
+  });
 }
+
 
 /* ------------------------------------------------------------
  * 【前端开发者 C】拖拽任务卡片以更新状态
