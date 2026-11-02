@@ -191,9 +191,64 @@ function initNewTaskForm() {
  *       或在 renderBoard() 之后重新绑定。
  * ---------------------------------------------------------- */
 
+/**
+ * 初始化拖拽：拖动任务卡片以更新状态
+ */
 function initDragAndDrop() {
-  // TODO: 由前端开发者 C 实现
-  console.warn('[kanban] initDragAndDrop() 尚未实现（前端开发者 C 负责）');
+  let draggingId = null;
+
+  // 1. 开始拖动
+  document.addEventListener('dragstart', function (event) {
+    const card = event.target.closest('.task-card');
+    if (!card) return;
+
+    draggingId = card.dataset.id;
+    event.dataTransfer.setData('text/plain', draggingId);
+    event.dataTransfer.effectAllowed = 'move';
+    card.classList.add('dragging');
+  });
+
+  // 2. 拖动结束
+  document.addEventListener('dragend', function (event) {
+    const card = event.target.closest('.task-card');
+    if (card) {
+      card.classList.remove('dragging');
+    }
+    draggingId = null;
+  });
+
+  // 3~5. 每列的 dragover / dragleave / drop
+  document.querySelectorAll('.task-list').forEach(function (list) {
+    list.addEventListener('dragover', function (event) {
+      event.preventDefault();               // 必须，否则无法放置
+      event.dataTransfer.dropEffect = 'move';
+      list.classList.add('drag-over');
+    });
+
+    list.addEventListener('dragleave', function () {
+      list.classList.remove('drag-over');
+    });
+
+    list.addEventListener('drop', function (event) {
+      event.preventDefault();
+      list.classList.remove('drag-over');
+
+      const id = event.dataTransfer.getData('text/plain') || draggingId;
+      if (!id) return;
+
+      const task = tasks.find(function (item) {
+        return item.id === id;
+      });
+      if (!task) return;
+
+      const newStatus = list.dataset.status;
+      if (task.status === newStatus) return;
+
+      task.status = newStatus;
+      saveTasks();
+      renderBoard();
+    });
+  });
 }
 
 /* ------------------------------------------------------------
