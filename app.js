@@ -203,7 +203,7 @@ function initNewTaskForm() {
       if (card) {
         deleteTask(card.dataset.id);
       }
-    });
+    }
   });
 }
 
